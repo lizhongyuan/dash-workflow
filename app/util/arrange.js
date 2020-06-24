@@ -4,9 +4,10 @@
 const Promise = require('bluebird');
 
 
-async function generalArrange(arrangeContext, rootTask, service, self) {
+async function generalArrange(rootTask, service, self) {
 
   const { ctx } = self;
+  const { arrange } = ctx;
 
   const taskMap = {};
 
@@ -17,7 +18,6 @@ async function generalArrange(arrangeContext, rootTask, service, self) {
   async function run(task, ctx, taskMap) {
 
     const curType = task.type;
-    // arrangeContext.name = task.name;
 
     const { params, throwError, isAsync, name, desc, sequence, metaTasks } = task;
 
@@ -26,9 +26,9 @@ async function generalArrange(arrangeContext, rootTask, service, self) {
       let curPromise;
 
       if (sequence === 'serial') { // 串行
-        curPromise = await setElemEachFlowWrapper(metaTasks, isAsync, throwError, arrangeContext, serialFlowHandler, ctx, taskMap);
+        curPromise = await setElemEachFlowWrapper(metaTasks, isAsync, throwError, serialFlowHandler, ctx, taskMap);
       } else if (sequence === 'parallel') {
-        curPromise = await setElemParallelWrapper(metaTasks, isAsync, throwError, arrangeContext, parallelFlowHandler, ctx, taskMap);
+        curPromise = await setElemParallelWrapper(metaTasks, isAsync, throwError, parallelFlowHandler, ctx, taskMap);
       }
 
       return curPromise;
@@ -38,16 +38,16 @@ async function generalArrange(arrangeContext, rootTask, service, self) {
       const curService = task.service;
       const curFunction = task.function;
 
-      arrangeContext.curStepName = name;
+      arrange.curStepName = name;
       // arrangeContext.curStepDesc = desc;
 
       const curFun = service[curService][curFunction];
 
       const execPromiseFunc = function execPromiseFunc() {
         if (isAsync) { // 不应该出现异步抛出Error, 所以不对异步做throwError判断
-          return atomicElemAsyncWrapper(curFun, arrangeContext, params, self, taskMap); //
+          return atomicElemAsyncWrapper(curFun, params, self, taskMap); //
         } else if (!isAsync) { // 同步
-          return atomicElemSyncWrapper(curFun, arrangeContext, params, throwError, self, taskMap);
+          return atomicElemSyncWrapper(curFun, params, throwError, self, taskMap);
         }
       };
 
@@ -86,12 +86,12 @@ async function generalArrange(arrangeContext, rootTask, service, self) {
     return allTasks;
   }
 
-  async function serialFlowHandler(curTasks, arrangeContext, paramCtx) {
+  async function serialFlowHandler(curTasks, paramCtx) {
 
     const serialPromise = Promise.each(curTasks, async function(curTask) {
       const { type, name, desc } = curTask;
 
-      arrangeContext.curStepName = name;
+      arrange.curStepName = name;
       // arrangeContext.curStepDesc = desc;
 
       if (type === 'atom') {
@@ -107,22 +107,22 @@ async function generalArrange(arrangeContext, rootTask, service, self) {
 }
 
 
-async function setElemEachFlowWrapper(curTasks, isAsync, throwError, arrangeContext, serialFlowHandler, ctx) {
+async function setElemEachFlowWrapper(curTasks, isAsync, throwError, serialFlowHandler, ctx) {
 
   let curPromise;
 
   if (isAsync) { // 异步, 不存在抛错
     curPromise = new Promise(resolve => {
-      serialFlowHandler(curTasks, arrangeContext, ctx)
+      serialFlowHandler(curTasks, ctx)
         .then(() => {}, err => { /* 记录log */ });
       resolve();
     });
   } else if (!isAsync) { // 同步
     if (throwError) {
-      curPromise = serialFlowHandler(curTasks, arrangeContext, ctx);
+      curPromise = serialFlowHandler(curTasks, ctx);
     } else if (!throwError) {
       curPromise = new Promise(resolve => {
-        serialFlowHandler(curTasks, arrangeContext, ctx)
+        serialFlowHandler(curTasks, ctx)
           .then(() => resolve(), err => { /* 记录log */ resolve(); });
       });
     }
@@ -132,7 +132,7 @@ async function setElemEachFlowWrapper(curTasks, isAsync, throwError, arrangeCont
 }
 
 
-async function setElemParallelWrapper(curTasks, isAsync, throwError, arrangeContext, parallelFlowHandler, ctx) {
+async function setElemParallelWrapper(curTasks, isAsync, throwError, parallelFlowHandler, ctx) {
 
   let curPromise;
 
@@ -159,9 +159,13 @@ async function setElemParallelWrapper(curTasks, isAsync, throwError, arrangeCont
 }
 
 
-function atomicElemAsyncWrapper(func, arrangeContext, externalParams, self, taskMap) {
+function atomicElemAsyncWrapper(func, externalParams, self, taskMap) {
+
+  const { ctx } = self;
+  const { arrange } = ctx;
+
   const curPromise = new Promise(resolve => {
-    func.call(self, arrangeContext, externalParams)
+    func.call(self, externalParams)
       .then(() => {}, err => { /* 记录log */ });
 
     const curTaskRes = {
@@ -169,7 +173,7 @@ function atomicElemAsyncWrapper(func, arrangeContext, externalParams, self, task
     };
 
     curTaskRes.status = 0;
-    taskMap[arrangeContext.curStepName] = curTaskRes;
+    taskMap[arrange.curStepName] = curTaskRes;
 
     resolve();
   });
@@ -178,7 +182,10 @@ function atomicElemAsyncWrapper(func, arrangeContext, externalParams, self, task
 }
 
 
-async function atomicElemSyncWrapper(func, arrangeContext, externalParams, throwError, self, taskMap) {
+async function atomicElemSyncWrapper(func, externalParams, throwError, self, taskMap) {
+
+  const { ctx } = self;
+  const { arrange } = ctx;
 
   const curPromise = new Promise((resolve, reject) => {
 
@@ -187,35 +194,35 @@ async function atomicElemSyncWrapper(func, arrangeContext, externalParams, throw
     };
 
     if (throwError) { // 抛错
-      func.call(self, arrangeContext, externalParams)
+      func.call(self, externalParams)
         .then(res => {
 
           curTaskRes.status = 0;
           curTaskRes.res = res;
-          taskMap[arrangeContext.curStepName] = curTaskRes;
+          taskMap[arrange.curStepName] = curTaskRes;
 
           resolve();
         }, err => {
           curTaskRes.status = -1;
           curTaskRes.error = err;
-          taskMap[arrangeContext.curStepName] = curTaskRes;
+          taskMap[arrange.curStepName] = curTaskRes;
 
           reject(err);
         });
     } else if (!throwError) { // 不抛错
-      func.call(self, arrangeContext, externalParams)
+      func.call(self, arrange, externalParams)
         .then(res => {
 
           curTaskRes.status = 0;
           curTaskRes.res = res;
-          taskMap[arrangeContext.curStepName] = curTaskRes;
+          taskMap[arrange.curStepName] = curTaskRes;
 
           resolve();
         }, err => {
 
           curTaskRes.status = 1;
           curTaskRes.error = err;
-          taskMap[arrangeContext.curStepName] = curTaskRes;
+          taskMap[arrange.curStepName] = curTaskRes;
 
           resolve();
         });

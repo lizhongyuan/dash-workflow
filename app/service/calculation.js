@@ -6,18 +6,19 @@ const { Service } = require('egg');
 
 class CalculationService extends Service {
 
-  async multi2(arrangeContext, params) {
+  async multi2(params) {
 
     const { ctx } = this;
-    let { num1 } = arrangeContext;
+    const { arrange } = ctx;
+    let { num1 } = arrange;
 
-    arrangeContext.step++;
+    arrange.step++;
 
-    ctx.dashLogger.info(arrangeContext);
+    ctx.dashLogger.info(arrange);
 
     num1 = num1 * 2;
 
-    arrangeContext.num1 = num1;
+    arrange.num1 = num1;
 
     return {
       num1
@@ -25,36 +26,38 @@ class CalculationService extends Service {
   }
 
 
-  async multi4(arrangeContext, params) {
+  async multi4(params) {
 
     const { ctx } = this;
-    let { num2 } = arrangeContext;
+    const { arrange } = ctx;
+    let { num2 } = arrange;
 
-    arrangeContext.step++;
+    arrange.step++;
 
-    ctx.dashLogger.info(arrangeContext);
+    ctx.dashLogger.info(arrange);
 
     num2 = num2 * 4;
 
-    arrangeContext.num2 = num2;
+    arrange.num2 = num2;
 
     return {
       num2
     };
   }
 
-  async add(arrangeContext, params) {
+  async add(params) {
 
     const { ctx } = this;
-    const { num1, num2 } = arrangeContext;
+    const { arrange } = ctx;
+    const { num1, num2 } = arrange;
 
-    arrangeContext.step++;
+    arrange.step++;
 
-    ctx.dashLogger.info(arrangeContext);
+    ctx.dashLogger.info(arrange);
 
     const result = num1 + num2;
 
-    arrangeContext.result = result;
+    arrange.result = result;
 
     return {
       result

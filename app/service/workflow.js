@@ -1,7 +1,6 @@
 'use strict';
 
 
-const Promise = require('bluebird');
 const { Service } = require('egg');
 const {
   cal1,
@@ -23,15 +22,15 @@ class WorkflowService extends Service {
     const { ctx } = this;
     const { service } = ctx;
 
-    const arrangeContext = {
+    ctx.arrange = {
       step: 0,
     };
 
-    const taskArr = await generalArrange(arrangeContext, case1, service, self);
-    // await generalArrange(arrangeContext, case2, service, self);
-    // await generalArrange(arrangeContext, case3, service, self);
-    // await generalArrange(arrangeContext, case4, service, self);
-    // await generalArrange(arrangeContext, case5, service, self);
+    const taskArr = await generalArrange(case1, service, self);
+    // await generalArrange(case2, service, self);
+    // await generalArrange(case3, service, self);
+    // await generalArrange(case4, service, self);
+    // await generalArrange(case5, service, self);
 
     ctx.dashLogger.info('taskMap:', JSON.stringify(taskArr));
   }
@@ -43,13 +42,13 @@ class WorkflowService extends Service {
     const { ctx } = this;
     const { service } = ctx;
 
-    const arrangeContext = {
+    ctx.arrange = {
       step: 0,
       num1,
       num2
     };
 
-    const taskMap = await generalArrange(arrangeContext, cal1, service, self);
+    const taskMap = await generalArrange(cal1, service, self);
 
     ctx.dashLogger.info('cal1 taskMap:', JSON.stringify(taskMap));
 
