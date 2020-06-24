@@ -4,6 +4,7 @@
 const Promise = require('bluebird');
 const { Service } = require('egg');
 const {
+  cal1,
   case1,
   case2,
   case3,
@@ -32,159 +33,24 @@ class WorkflowService extends Service {
     // await generalArrange(arrangeContext, case4, service, self);
     // await generalArrange(arrangeContext, case5, service, self);
 
-    ctx.dashLogger.info('taskArr:', JSON.stringify(taskArr));
+    ctx.dashLogger.info('taskMap:', JSON.stringify(taskArr));
   }
 
+  async cal1() {
 
-  async node1(arrangeContext, params) {
-
+    const self = this;
     const { ctx } = this;
+    const { service } = ctx;
 
-    arrangeContext.step++;
+    const arrangeContext = {
+      step: 0,
+    };
 
-    ctx.dashLogger.info(arrangeContext);
+    const taskMap = await generalArrange(arrangeContext, cal1, service, self);
 
-    const timeout = params.timeout ? params.timeout : 0;
-    return new Promise(resolve => {
-      setTimeout(() => {
-        resolve();
-      }, timeout);
-    });
+    ctx.dashLogger.info('cal1 taskMap:', JSON.stringify(taskMap));
   }
 
-  async node2(arrangeContext, params) {
-
-    const { ctx } = this;
-
-    arrangeContext.step++;
-
-    ctx.dashLogger.info(arrangeContext);
-
-    const timeout = params.timeout ? params.timeout : 0;
-
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve();
-      }, timeout);
-    });
-  }
-
-  async node3(arrangeContext, params) {
-    const { ctx } = this;
-    arrangeContext.step++;
-    ctx.dashLogger.info(arrangeContext);
-
-    const timeout = params.timeout ? params.timeout : 0;
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve();
-      }, timeout);
-    });
-  }
-
-  async node4(arrangeContext, params) {
-    const { ctx } = this;
-    arrangeContext.step++;
-    ctx.dashLogger.info(arrangeContext);
-
-    const timeout = params.timeout ? params.timeout : 0;
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve();
-      }, timeout);
-    });
-  }
-
-  async node5(arrangeContext, params) {
-    const { ctx } = this;
-    arrangeContext.step++;
-    ctx.dashLogger.info(arrangeContext);
-
-    const timeout = params.timeout ? params.timeout : 0;
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve();
-      }, timeout);
-    });
-  }
-
-  async node6(arrangeContext, params) {
-    const { ctx } = this;
-    arrangeContext.step++;
-    ctx.dashLogger.info(arrangeContext);
-
-    const timeout = params.timeout ? params.timeout : 0;
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve();
-      }, timeout);
-    });
-  }
-
-  async node7(arrangeContext, params) {
-    const { ctx } = this;
-    arrangeContext.step++;
-    ctx.dashLogger.info(arrangeContext);
-
-    const timeout = params.timeout ? params.timeout : 0;
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve();
-      }, timeout);
-    });
-  }
-
-  async node8(arrangeContext, params) {
-    const { ctx } = this;
-    arrangeContext.step++;
-    ctx.dashLogger.info(arrangeContext);
-
-    const timeout = params.timeout ? params.timeout : 0;
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve();
-      }, timeout);
-    });
-  }
-
-  async node9(arrangeContext, params) {
-    const { ctx } = this;
-    arrangeContext.step++;
-    ctx.dashLogger.info(arrangeContext);
-
-    const timeout = params.timeout ? params.timeout : 0;
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve();
-      }, timeout);
-    });
-  }
-
-  async node10(arrangeContext, params) {
-    const { ctx } = this;
-    arrangeContext.step++;
-    ctx.dashLogger.info(arrangeContext);
-
-    const timeout = params.timeout ? params.timeout : 0;
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve();
-      }, timeout);
-    });
-  }
-
-  async node11(arrangeContext, params) {
-    const { ctx } = this;
-    arrangeContext.step++;
-    ctx.dashLogger.info(arrangeContext);
-
-    const timeout = params.timeout ? params.timeout : 0;
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve();
-      }, timeout);
-    });
-  }
 }
 
 

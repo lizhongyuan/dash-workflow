@@ -2,9 +2,52 @@
 
 
 // 1234串联
+exports.cal1 = {
+  name: 'calculation1',
+  desc: 'this is the whole node',
+  type: 'set',
+  params: {},
+  throwError: true,
+  isAsync: false,
+  sequence: 'serial',
+  metaTasks: [
+    {
+      name: 'multi2',
+      desc: 'num1 * 2',
+      type: 'atom',
+      params: {},
+      throwError: true,
+      isAsync: false,
+      service: 'calculation',
+      function: 'multi2',
+    },
+    {
+      name: 'multi4',
+      desc: 'num2 * 4',
+      type: 'atom',
+      params: {},
+      throwError: true,
+      isAsync: false,
+      service: 'calculation',
+      function: 'multi4',
+    },
+    {
+      name: 'result',
+      desc: 'result',
+      type: 'atom',
+      params: {},
+      throwError: true,
+      isAsync: false,
+      service: 'calculation',
+      function: 'add',
+    }
+  ],
+};
+
+// 1234串联
 exports.case1 = {
   name: 'wholeWorkflow',
-  desc: 'this is the whole workflow',
+  desc: 'this is the whole node',
   type: 'set',
   params: {},
   throwError: true,
@@ -20,7 +63,7 @@ exports.case1 = {
       },
       throwError: true,
       isAsync: false,
-      service: 'workflow',
+      service: 'node',
       function: 'node1',
     },
     {
@@ -32,7 +75,7 @@ exports.case1 = {
       },
       throwError: true,
       isAsync: false,
-      service: 'workflow',
+      service: 'node',
       function: 'node2',
     },
     {
@@ -44,7 +87,7 @@ exports.case1 = {
       },
       throwError: true,
       isAsync: false,
-      service: 'workflow',
+      service: 'node',
       function: 'node3',
     },
     {
@@ -56,7 +99,7 @@ exports.case1 = {
       },
       throwError: true,
       isAsync: false,
-      service: 'workflow',
+      service: 'node',
       function: 'node4',
     },
   ],
@@ -66,7 +109,7 @@ exports.case1 = {
 // 123并联, 同步(都执行完), 同步
 exports.case2 = {
   name: 'wholeWorkflow',
-  desc: 'this is the whole workflow',
+  desc: 'this is the whole node',
   type: 'set',
   params: {},
   throwError: true,
@@ -82,7 +125,7 @@ exports.case2 = {
       },
       throwError: true,
       isAsync: false,
-      service: 'workflow',
+      service: 'node',
       function: 'node1',
     },
     {
@@ -94,7 +137,7 @@ exports.case2 = {
       },
       throwError: true,
       isAsync: false,
-      service: 'workflow',
+      service: 'node',
       function: 'node2',
     },
     {
@@ -106,7 +149,7 @@ exports.case2 = {
       },
       throwError: true,
       isAsync: false,
-      service: 'workflow',
+      service: 'node',
       function: 'node3',
     },
     {
@@ -118,7 +161,7 @@ exports.case2 = {
       },
       throwError: true,
       isAsync: false,
-      service: 'workflow',
+      service: 'node',
       function: 'node4',
     },
   ],
@@ -128,7 +171,7 @@ exports.case2 = {
 // 123并联, 异步(调用后立刻acknowledge)
 exports.case3 = {
   name: 'wholeWorkflow',
-  desc: 'this is the whole workflow',
+  desc: 'this is the whole node',
   type: 'set',
   params: {},
   throwError: true,
@@ -144,7 +187,7 @@ exports.case3 = {
       },
       throwError: true,
       isAsync: false,
-      service: 'workflow',
+      service: 'node',
       function: 'node1',
     },
     {
@@ -156,7 +199,7 @@ exports.case3 = {
       },
       throwError: true,
       isAsync: false,
-      service: 'workflow',
+      service: 'node',
       function: 'node2',
     },
     {
@@ -168,7 +211,7 @@ exports.case3 = {
       },
       throwError: true,
       isAsync: false,
-      service: 'workflow',
+      service: 'node',
       function: 'node3',
     },
     {
@@ -180,7 +223,7 @@ exports.case3 = {
       },
       throwError: true,
       isAsync: false,
-      service: 'workflow',
+      service: 'node',
       function: 'node4',
     },
   ],
@@ -190,7 +233,7 @@ exports.case3 = {
 // 1234串联, 3异步, 124同步, 同步接口
 exports.case4 = {
   name: 'wholeWorkflow',
-  desc: 'this is the whole workflow',
+  desc: 'this is the whole node',
   type: 'set',
   params: {},
   throwError: true,
@@ -206,7 +249,7 @@ exports.case4 = {
       },
       throwError: true,
       isAsync: false,
-      service: 'workflow',
+      service: 'node',
       function: 'node1',
     },
     {
@@ -218,7 +261,7 @@ exports.case4 = {
       },
       throwError: true,
       isAsync: false,
-      service: 'workflow',
+      service: 'node',
       function: 'node2',
     },
     {
@@ -230,7 +273,7 @@ exports.case4 = {
       },
       throwError: true,
       isAsync: true,
-      service: 'workflow',
+      service: 'node',
       function: 'node3',
     },
     {
@@ -242,7 +285,7 @@ exports.case4 = {
       },
       throwError: true,
       isAsync: false,
-      service: 'workflow',
+      service: 'node',
       function: 'node4',
     },
   ],
@@ -251,7 +294,7 @@ exports.case4 = {
 
 exports.case5 = {
   name: 'wholeWorkflow',
-  desc: 'this is the whole workflow',
+  desc: 'this is the whole node',
   type: 'set',
   params: {},
   throwError: true,
@@ -267,7 +310,7 @@ exports.case5 = {
       },
       throwError: true,
       isAsync: false,
-      service: 'workflow',
+      service: 'node',
       function: 'node1',
     },
     {
@@ -279,7 +322,7 @@ exports.case5 = {
       },
       throwError: true,
       isAsync: false,
-      service: 'workflow',
+      service: 'node',
       function: 'node2',
     },
     {
@@ -300,7 +343,7 @@ exports.case5 = {
           },
           throwError: true,
           isAsync: false,
-          service: 'workflow',
+          service: 'node',
           function: 'node3',
         },
         {
@@ -312,7 +355,7 @@ exports.case5 = {
           },
           throwError: true,
           isAsync: false,
-          service: 'workflow',
+          service: 'node',
           function: 'node4',
         },
       ],
@@ -321,9 +364,9 @@ exports.case5 = {
 };
 
 
-exports.workflowConfig_final = {
+exports.nodeConfig_final = {
   name: 'wholeWorkflow',
-  desc: 'this is the whole workflow',
+  desc: 'this is the whole node',
   type: 'set',
   params: {},
   throwError: true,
@@ -338,7 +381,7 @@ exports.workflowConfig_final = {
     },
     throwError: true,
     isAsync: false,
-    service: 'workflow',
+    service: 'node',
     function: 'node1',
   },
   {
@@ -367,7 +410,7 @@ exports.workflowConfig_final = {
         },
         throwError: true,
         isAsync: false,
-        service: 'workflow',
+        service: 'node',
         function: 'node2',
       },
       {
@@ -379,7 +422,7 @@ exports.workflowConfig_final = {
         },
         throwError: true,
         isAsync: false,
-        service: 'workflow',
+        service: 'node',
         function: 'node5',
       },
       {
@@ -391,7 +434,7 @@ exports.workflowConfig_final = {
         },
         throwError: true,
         isAsync: false,
-        service: 'workflow',
+        service: 'node',
         function: 'node6',
       },
       {
@@ -412,7 +455,7 @@ exports.workflowConfig_final = {
           throwError: true,
           // isAsync: true,
           isAsync: false,
-          service: 'workflow',
+          service: 'node',
           function: 'node7',
         },
         {
@@ -425,7 +468,7 @@ exports.workflowConfig_final = {
           throwError: true,
           // isAsync: true,
           isAsync: false,
-          service: 'workflow',
+          service: 'node',
           function: 'node8',
         },
         {
@@ -438,7 +481,7 @@ exports.workflowConfig_final = {
           throwError: true,
           // isAsync: true,
           isAsync: false,
-          service: 'workflow',
+          service: 'node',
           function: 'node9',
         },
         ],
@@ -455,7 +498,7 @@ exports.workflowConfig_final = {
       throwError: true,
       // isAsync: true,
       isAsync: false,
-      service: 'workflow',
+      service: 'node',
       function: 'node3',
     },
     {
@@ -476,7 +519,7 @@ exports.workflowConfig_final = {
         },
         throwError: true,
         isAsync: false,
-        service: 'workflow',
+        service: 'node',
         function: 'node4',
       },
       {
@@ -496,7 +539,7 @@ exports.workflowConfig_final = {
           },
           throwError: true,
           isAsync: false,
-          service: 'workflow',
+          service: 'node',
           function: 'node10',
         },
         {
@@ -508,7 +551,7 @@ exports.workflowConfig_final = {
           },
           throwError: true,
           isAsync: false,
-          service: 'workflow',
+          service: 'node',
           function: 'node11',
         },
         ],
@@ -523,6 +566,6 @@ exports.workflowConfig_final = {
 
 /*
 module.exports = {
-  workflowConfig,
+  nodeConfig,
 };
  */
