@@ -36,7 +36,8 @@ class WorkflowService extends Service {
     ctx.dashLogger.info('taskMap:', JSON.stringify(taskArr));
   }
 
-  async cal1() {
+
+  async cal1(num1, num2) {
 
     const self = this;
     const { ctx } = this;
@@ -44,11 +45,17 @@ class WorkflowService extends Service {
 
     const arrangeContext = {
       step: 0,
+      num1,
+      num2
     };
 
     const taskMap = await generalArrange(arrangeContext, cal1, service, self);
 
     ctx.dashLogger.info('cal1 taskMap:', JSON.stringify(taskMap));
+
+    const res = taskMap.result.res;
+
+    return res;
   }
 
 }

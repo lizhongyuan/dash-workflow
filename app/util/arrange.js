@@ -8,7 +8,6 @@ async function generalArrange(arrangeContext, rootTask, service, self) {
 
   const { ctx } = self;
 
-  // const taskMap = [];
   const taskMap = {};
 
   await run(rootTask, ctx, taskMap);
@@ -60,6 +59,7 @@ async function generalArrange(arrangeContext, rootTask, service, self) {
 
     const allTasks = [];
 
+    /*
     for (let i = 0; i < curTasks.length; i++) {
       if (curTasks[i].type === 'atom') {
         const curFun = await run(curTasks[i], paramCtx, taskMap);
@@ -67,6 +67,18 @@ async function generalArrange(arrangeContext, rootTask, service, self) {
         allTasks.push(curPromise);
       } else {
         const curPromise = await run(curTasks[i], paramCtx, taskMap);
+        allTasks.push(curPromise);
+      }
+    }
+     */
+
+    for (const curTask of curTasks) {
+      if (curTask.type === 'atom') {
+        const curFun = await run(curTask, paramCtx, taskMap);
+        const curPromise = curFun();
+        allTasks.push(curPromise);
+      } else {
+        const curPromise = await run(curTask, paramCtx, taskMap);
         allTasks.push(curPromise);
       }
     }
