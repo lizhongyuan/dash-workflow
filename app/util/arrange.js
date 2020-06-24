@@ -8,9 +8,14 @@ async function generalArrange(arrangeContext, rootTask, service, self) {
 
   const { ctx } = self;
 
-  return await run(rootTask, ctx);
+  const taskArr = [];
 
-  async function run(task, ctx) {
+  // return await run(rootTask, ctx, taskArr);
+  await run(rootTask, ctx, taskArr);
+
+  return taskArr;
+
+  async function run(task, ctx, taskArr) {
 
     const curType = task.type;
 
@@ -21,9 +26,9 @@ async function generalArrange(arrangeContext, rootTask, service, self) {
       let curPromise;
 
       if (sequence === 'serial') { // 串行
-        curPromise = await setElemEachFlowWrapper(metaTasks, isAsync, throwError, arrangeContext, serialFlowHandler, ctx);
+        curPromise = await setElemEachFlowWrapper(metaTasks, isAsync, throwError, arrangeContext, serialFlowHandler, ctx, taskArr);
       } else if (sequence === 'parallel') {
-        curPromise = await setElemParallelWrapper(metaTasks, isAsync, throwError, arrangeContext, parallelFlowHandler, ctx);
+        curPromise = await setElemParallelWrapper(metaTasks, isAsync, throwError, arrangeContext, parallelFlowHandler, ctx, taskArr);
       }
 
       return curPromise;
@@ -40,9 +45,9 @@ async function generalArrange(arrangeContext, rootTask, service, self) {
 
       const execPromiseFunc = function execPromiseFunc() {
         if (isAsync) { // 不应该出现异步抛出Error, 所以不对异步做throwError判断
-          return atomicElemAsyncWrapper(curFun, arrangeContext, params, self); //
+          return atomicElemAsyncWrapper(curFun, arrangeContext, params, self, taskArr); //
         } else if (!isAsync) { // 同步
-          return atomicElemSyncWrapper(curFun, arrangeContext, params, throwError, self);
+          return atomicElemSyncWrapper(curFun, arrangeContext, params, throwError, self, taskArr);
         }
       };
 
@@ -56,11 +61,11 @@ async function generalArrange(arrangeContext, rootTask, service, self) {
 
     for (let i = 0; i < curTasks.length; i++) {
       if (curTasks[i].type === 'atom') {
-        const curFun = await run(curTasks[i], paramCtx);
+        const curFun = await run(curTasks[i], paramCtx, taskArr);
         const curPromise = curFun();
         allTasks.push(curPromise);
       } else {
-        const curPromise = await run(curTasks[i], paramCtx);
+        const curPromise = await run(curTasks[i], paramCtx, taskArr);
         allTasks.push(curPromise);
       }
     }
@@ -77,10 +82,10 @@ async function generalArrange(arrangeContext, rootTask, service, self) {
       // arrangeContext.curStepDesc = desc;
 
       if (type === 'atom') {
-        const curFun = await run(curTask, paramCtx);
+        const curFun = await run(curTask, paramCtx, taskArr);
         await curFun();
       } else if (type === 'set') {
-        await run(curTask, paramCtx);
+        await run(curTask, paramCtx, taskArr);
       }
     });
 
@@ -152,11 +157,23 @@ function atomicElemAsyncWrapper(func, arrangeContext, externalParams, self) {
 }
 
 
-async function atomicElemSyncWrapper(func, arrangeContext, externalParams, throwError, self) {
+async function atomicElemSyncWrapper(func, arrangeContext, externalParams, throwError, self, taskArr) {
+
   const curPromise = new Promise((resolve, reject) => {
+
+    const curTaskRes = {
+      mode: 'sync',
+    };
+
     if (throwError) { // 抛错
       func.call(self, arrangeContext, externalParams)
-        .then(() => resolve(), err => reject(err));
+        .then(res => {
+
+          curTaskRes.res = res;
+          taskArr.push(curTaskRes);
+
+          resolve();
+        }, err => reject(err));
     } else if (!throwError) { // 不抛错
       func.call(self, arrangeContext, externalParams)
         .then(() => resolve(), err => { /* 记录日志 */ resolve(); });

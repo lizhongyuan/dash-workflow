@@ -26,11 +26,13 @@ class WorkflowService extends Service {
       step: 0,
     };
 
-    await generalArrange(arrangeContext, case1, service, self);
+    const taskArr = await generalArrange(arrangeContext, case1, service, self);
     // await generalArrange(arrangeContext, case2, service, self);
     // await generalArrange(arrangeContext, case3, service, self);
     // await generalArrange(arrangeContext, case4, service, self);
     // await generalArrange(arrangeContext, case5, service, self);
+
+    ctx.dashLogger.info('taskArr:', JSON.stringify(taskArr));
   }
 
 
